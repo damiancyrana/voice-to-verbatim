@@ -22,7 +22,7 @@ def recognize_continuous_from_wav(file_path):
     """
     Recognition of speech from a WAV file in continuous mode
     """
-    speech_config = speechsdk.SpeechConfig(subscription="", region="")
+    speech_config = speechsdk.SpeechConfig(subscription="a1ece422006a45b48698b8bfdc14acab", region="westeurope")
     audio_config = speechsdk.audio.AudioConfig(filename=file_path)
     speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, audio_config=audio_config)
 

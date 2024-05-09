@@ -8,9 +8,9 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_LINE_SPACING
 
 
 def translate_text(text, to_lang="pl"):
-    key = ""
-    endpoint = ""
-    location = ""
+    key = "248b7a0b74c141cd8dc0bd241dd36122"
+    endpoint = "https://api.cognitive.microsofttranslator.com"
+    location = "westeurope"
     path = '/translate'
     constructed_url = endpoint + path
 
@@ -79,7 +79,7 @@ def save_text_to_word(text, output_directory, output_file):
     paragraph_format.line_spacing_rule = WD_LINE_SPACING.ONE_POINT_FIVE
     paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
     paragraph.add_run(text)
-    
+
     doc.save(os.path.join(output_directory, output_file))
     print(f"\nTranscription saved to: {os.path.join(output_directory, output_file)}")
 
