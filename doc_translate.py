@@ -5,10 +5,22 @@ import time
 from docx import Document
 from docx.shared import Pt
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_LINE_SPACING
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
 
 
-def translate_text(text, to_lang="pl"):
-    key = "248b7a0b74c141cd8dc0bd241dd36122"
+# Azure Key Vault configuration
+key_vault_name = "main-project-key-vault"
+key_vault_URI = f"https://{key_vault_name}.vault.azure.net/"
+secret_name = "voice-to-verbatiom-translator"
+
+credential = DefaultAzureCredential()
+secret_client = SecretClient(vault_url=key_vault_URI, credential=credential)
+translation_service_key = secret_client.get_secret(secret_name).value
+
+
+def translate_text(text):
+    key = translation_service_key
     endpoint = "https://api.cognitive.microsofttranslator.com"
     location = "westeurope"
     path = '/translate'
@@ -17,7 +29,7 @@ def translate_text(text, to_lang="pl"):
     params = {
         'api-version': '3.0',
         'from': 'en',
-        'to': [to_lang]
+        'to': 'pl'
     }
 
     headers = {
@@ -100,6 +112,5 @@ for file_name in os.listdir(source_folder):
             translated_text = translate_text(text_to_translate)
             if translated_text:
                 save_text_to_word(translated_text, destination_folder, output_file_name)
-            time.sleep(60)
         else:
             print(f"The file {output_file_name} already exists, I omit the translation")

@@ -4,6 +4,18 @@ import azure.cognitiveservices.speech as speechsdk
 from docx import Document
 from docx.shared import Pt
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_LINE_SPACING
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
+
+
+# Azure Key Vault configuration
+key_vault_name = "main-project-key-vault"
+key_vault_URI = f"https://{key_vault_name}.vault.azure.net/"
+secret_name = "voice-to-verbatiom-speech-recognizer"
+
+credential = DefaultAzureCredential()
+secret_client = SecretClient(vault_url=key_vault_URI, credential=credential)
+speech_service_key = secret_client.get_secret(secret_name).value
 
 
 def find_wav_files(directory):
@@ -18,14 +30,14 @@ def find_wav_files(directory):
                 wav_files.append(os.path.join(audio_dir, file))
     return wav_files
 
+
 def recognize_continuous_from_wav(file_path):
     """
     Recognition of speech from a WAV file in continuous mode
     """
-    speech_config = speechsdk.SpeechConfig(subscription="a1ece422006a45b48698b8bfdc14acab", region="westeurope")
+    speech_config = speechsdk.SpeechConfig(subscription=speech_service_key, region="westeurope")
     audio_config = speechsdk.audio.AudioConfig(filename=file_path)
     speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, audio_config=audio_config)
-
     done = False
     all_results = []
 
